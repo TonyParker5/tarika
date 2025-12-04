@@ -1,17 +1,26 @@
+import { Link } from 'react-router-dom'
+import '../../css/Header.css'
+
 function Header() {
 
-    
   return (
-    <div>
-        <div  className="header">
-            <div  className="container">
+    <header className="header floating-header">
+      <div className="container">
 
-              <h4>تركة - لحساب قيمة الميراث</h4>
-              <p>*نموذج أولي*</p>
+        <Link to="/comments" className="comment-link" aria-label="Open comments">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            <path d="M8 10h.01M12 10h.01M16 10h.01"/>
+          </svg>
+        </Link>
 
-            </div>
+        <div className="brand">
+          <h4>تركة - لحساب قيمة الميراث</h4>
+          <p>*نموذج أولي*</p>
         </div>
-    </div>
+
+      </div>
+    </header>
   )
 }
 

@@ -161,7 +161,7 @@ function HomePage() {
 
     return (
         <div className='container'>
-            <p style={{textAlign:"center"}}>حساب الميراث على المذهب</p>
+            <p style={{textAlign:"center", marginTop:"20px"}}>حساب الميراث على المذهب</p>
             <h1 style={{textAlign:"center", background:'white', border:"none"}}>المالكي</h1>
 
             <div id="items">

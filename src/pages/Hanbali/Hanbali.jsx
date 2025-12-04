@@ -145,7 +145,7 @@ function HomePage() {
 
     useEffect(() => {
         if (array.length != 0) {
-            setNext(<button className="light-button" onClick={() => navigate('/MCalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button>);
+            setNext(<button className="light-button" onClick={() => navigate('/ACalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button>);
             setText(<p>لحذف العناصر إضغط على العناصر بالصندوق</p>)
         } else {
             setNext([]);
@@ -161,8 +161,8 @@ function HomePage() {
 
     return (
         <div className='container'>
-            <p style={{textAlign:"center"}}>حساب الميراث على المذهب</p>
-            <h1 style={{textAlign:"center", background:'white', border:"none"}}>الشافعي</h1>
+            <p style={{textAlign:"center", marginTop:"20px"}}>حساب الميراث على المذهب</p>
+            <h1 style={{textAlign:"center", background:'white', border:"none"}}>الحنبلي</h1>
 
             <div id="items">
                 {array}
