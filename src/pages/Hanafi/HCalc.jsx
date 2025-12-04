@@ -66,7 +66,7 @@ function Cart() {
         for (let i = 1; i <= 3; i++) {
           if(males.filter(data => data.gen == i).length !== 0){
             let outcome = checkEqual(list, males.filter(data => data.gen == i)[0]) ?
-              [males.filter(data => data.gen == i), females.filter(data => data.gen == i || data.gen == i-1)]  : [males.filter(data => data.gen == i)]
+              [males.filter(data => data.gen == i), females.filter(data => data.gen == i)]  : [males.filter(data => data.gen == i)]
             return { array:outcome, force:checkEqual(list, outcome[0][0]) }
           }
         }
@@ -432,19 +432,19 @@ function Cart() {
         }
         break;
 
-        case 'بنت الإبن':if (daughterhalf){
+        case 'بنت الإبن':if (daughterhalf && checkForce(list, data)){
           confirm = true;
           IDs.push(data.ID);
         }
         break;
 
-        case 'بنت إبن الإبن':if (granddaughterhalf){
+        case 'بنت إبن الإبن':if (granddaughterhalf && !checkForce(list, data)){
           confirm = true;
           IDs.push(data.ID);
         }
         break;
 
-        case 'الأخت لأب': if (sisterhalf){
+        case 'الأخت لأب': if (sisterhalf && !checkForce(list, data)){
           confirm = true;
           IDs.push(data.ID);
         }
