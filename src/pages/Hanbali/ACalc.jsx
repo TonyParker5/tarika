@@ -522,8 +522,6 @@ function Cart() {
       group[priorety().array[0][0].title] = { count: mcount*2 + fcount, mdata:priorety().array[0], fdata:priorety().array[1],
         data:[...priorety().array[0], ...priorety().array[1],], force: true, item: {
         ID: priorety().array[0][0].ID,
-        forcer: priorety().array[0][0].title,
-        forced: priorety().array[1][0].title,
         share: 'ع',
         upper: 1,
         lower: 1,
