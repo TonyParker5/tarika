@@ -10,6 +10,10 @@
   border-bottom: 1px solid var(--glass-border);
 }
 
+h4{
+  color:white;
+}
+
 .header .container {
   position: relative;
   display: flex;

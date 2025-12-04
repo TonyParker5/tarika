@@ -14,33 +14,18 @@ function App() {
 
   const router = createBrowserRouter([
     { path: "/",
-      element: <Home props={{home:'/Maliki', calc:'/MCalc'}} /> ,
+      element: <Home/> ,
       children:[
-                  {index:true     , element:<Maliki/>},
-                  {path:"MCalc"    , element:<MCalc/>}
-               ] 
-    },
-    { path: "/Shafiai",
-      element: <Home props={{home:"/Shafiai", calc:'/SCalc'}} /> ,
-      children:[
-                  {index:true    , element:<Shafiai/>},
-                  {path:"SCalc"    , element:<SCalc/>}
-               ] 
-    },
-    { path: "/Hanbali",
-      element: <Home props={{home:"/Hanbali", calc:'/ACalc'}} /> ,
-      children:[
-                  {index:true    , element:<Hanbali/>},
-                  {path:"ACalc"    , element:<ACalc/>}
-               ] 
-    },
-    { path: "/Hanafi",
-      element: <Home props={{home:"/Hanafi", calc:'/HCalc'}} /> ,
-      children:[
-                  {index:true     , element:<Hanafi/>},
+                  {index:true      , element:<Maliki/>},
+                  {path:"MCalc"    , element:<MCalc/>},
+                  {path:"/Shafiai" , element:<Shafiai/>},
+                  {path:"SCalc"    , element:<SCalc/>},
+                  {path:"/Hanbali" , element:<Hanbali/>},
+                  {path:"ACalc"    , element:<ACalc/>},
+                  {path:"/Hanafi"  , element:<Hanafi/>},
                   {path:"HCalc"    , element:<HCalc/>}
                ] 
-    },
+    }
   ])
   
   return (
