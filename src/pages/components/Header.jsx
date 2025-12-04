@@ -5,9 +5,9 @@ function Header() {
     <div>
         <div  className="header">
             <div  className="container">
-       
-                <h1 style={{textAlign:"center", background:'white', border:"none"}}>تركة - لحساب قيمة الميراث</h1>
-                <p>*نموذج أولي*</p>
+
+              <h4>تركة - لحساب قيمة الميراث</h4>
+              <p>*نموذج أولي*</p>
 
             </div>
         </div>

@@ -62,6 +62,7 @@ function Cart() {
 
       if(males.filter(data => data.con == 'leaf').length !== 0){
         males = males.filter(data => data.con == 'leaf');
+        females = females.filter(data => data.con == 'leaf');
         for (let i = 1; i <= 3; i++) {
           if(males.filter(data => data.gen == i).length !== 0){
             let outcome = checkEqual(list, males.filter(data => data.gen == i)[0]) ?
@@ -71,14 +72,15 @@ function Cart() {
         }
       } else if(males.filter(data => data.con == 'root').length !== 0 && !checkO(list)){
         males = males.filter(data => data.con == 'root');
+        females = females.filter(data => data.con == 'root');
         for (let i = -1; i >= -3; --i) {
-          console.log(males.filter(data => data.gen == i));
           if(males.filter(data => data.gen == i).length !== 0){
             return { array:[males.filter(data => data.gen == i)], force:false }
           }
         }
       } else if(males.filter(data => data.con == 'sibling' || data.con == 'nephew').length !== 0){
         males = males.filter(data => data.con == 'sibling' || data.con == 'nephew');
+        females = females.filter(data => data.con == 'sibling' || data.con == 'nephew');
         for (let i = 0; i <= 3; i++) {
           if(males.filter(data => data.gen == i && data.rel == 'Both Side').length !== 0){
             let outcome = i < 2 ? checkEqual(list, males.filter(data => data.gen == i)[0]) ?
@@ -91,7 +93,8 @@ function Cart() {
           }
         }
       } else if(males.filter(data => data.con == 'uncle' || data.con == 'cousin').length !== 0){
-        males = males.filter(data => data.con == 'uncle' || data.con == 'cousin');
+        females = males.filter(data => data.con == 'uncle' || data.con == 'cousin');
+        females = males.filter(data => data.con == 'uncle' || data.con == 'cousin');
         for(let i = -1; i >= -3; --i){
           for (let j = i; j < i+2; j++) {
             if(males.filter(data => data.gen == j && data.rel == 'Both Side').length !== 0){
@@ -477,13 +480,13 @@ function Cart() {
 
       switch(data.title){
 
-        case 'الأخت الشقيقة': if(list.filter(info => info.con == 'leaf' && info.sex == 'female').length !== 0){
+        case 'الأخت الشقيقة': if(list.filter(info => info.con == 'leaf' && info.sex == 'female').length == 0){
           confirm = true;
           IDs.push(data.ID);
         }
         break;
 
-        case 'الأخت لأب': if(list.filter(info => info.title == 'البنت' || info.title == 'بنت الإبن').length !== 0){
+        case 'الأخت لأب': if(list.filter(info => info.con == 'leaf' && info.sex == 'female').length == 0){
           confirm = true;
           IDs.push(data.ID);
         }
@@ -501,6 +504,7 @@ function Cart() {
          numbers.push(1);
       }
     })
+
     let trueone = 0;
     let trues = numbers;
     for (let i = 0; i < trues.length; i++) {
@@ -956,7 +960,6 @@ function Cart() {
       const share = rendergroup[name].item.share;
       const worth = rendergroup[name].item.worth;
       const count = rendergroup[name].count;
-
       if(share === 'ع' || share === 'ب'){
         if(rendergroup[name].force === true){
           let mcount = rendergroup[name].item.mcount;
@@ -965,7 +968,7 @@ function Cart() {
           let fworth = worth/count;
           tableSubstitude.push(
             <tr key={rendergroup[name].mdata[0].ID}>
-              <td>{ Math.round((((mworth / substitude * inheritage))/count) * 1000) / 1000 }</td>
+              <td>{ Math.round(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
               <td>{ Math.round((mworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (mworth) }</td>
               <td>{rendergroup[name].mdata[0].name}</td>
@@ -973,7 +976,7 @@ function Cart() {
             </tr>)
           for(let i=1;i<mcount;i++){tableSubstitude.push(
             <tr key={rendergroup[name].mdata[i].ID}>
-              <td>{ Math.round((((mworth / substitude * inheritage))/count) * 1000) / 1000 }</td>
+              <td>{ Math.round(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
               <td>{ Math.round((mworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (mworth) }</td>
               <td>{rendergroup[name].mdata[i].name}</td>
@@ -990,8 +993,8 @@ function Cart() {
         } else if(rendergroup[name].force === false){
           tableSubstitude.push(
             <tr key={rendergroup[name].data[0].ID}>
-              <td>{ Math.round((((worth / substitude * inheritage))/count) * 1000) / 1000 }</td>
-              <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
+              <td>{ Math.round(((worth / substitude * inheritage)) * 1000) / 1000 }</td>
+              <td>{ Math.round(((worth / substitude * 100)) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[0].name}</td>
               <td rowSpan={count}>{share}</td>
@@ -1015,7 +1018,6 @@ function Cart() {
             <td rowSpan={count}>{share}</td>
           </tr>
         );
-        console.log(substitude, worth, inheritage, count);
         for(let i = 1; i < (rendergroup[name].count || 1); i++){
           tableSubstitude.push(
             <tr key={rendergroup[name].data[i].ID}>
@@ -1053,8 +1055,9 @@ function Cart() {
           </tbody>
         </table>
       </div>
-      <div id="total" style={{marginBottom:'150px'}}>
+      <div id="total" style={{marginBottom:'50px'}}>
         <input name="inheritage" type="number" onKeyUp={(e) => {setInh(Number(e.target.value) || 0)}} placeholder="قيمة الميراث"/>
+        <label htmlFor=""> :أدخل قيمة الميراث</label>
       </div>
     </div>
   );
