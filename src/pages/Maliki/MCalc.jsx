@@ -83,10 +83,14 @@ function Cart() {
         females = females.filter(data => data.con == 'sibling' || data.con == 'nephew');
         for (let i = 0; i <= 3; i++) {
           if(males.filter(data => data.gen == i && data.rel == 'Both Side').length !== 0){
+            males = males.filter(data => data.rel == 'Both Side');
+            females = females.filter(data => data.rel == 'Both Side');
             let outcome = i < 2 ? checkEqual(list, males.filter(data => data.gen == i)[0]) ?
               [males.filter(data => data.gen == i), females.filter(data => data.gen == i)]  : [males.filter(data => data.gen == i)] : [males.filter(data => data.gen == i)]
             return { array:outcome, force: i < 2 ? checkEqual(list, outcome[0][0]) : false }
           } else if(males.filter(data => data.gen == i && data.rel == 'Father Side').length !== 0){
+            males = males.filter(data => data.rel == 'Father Side');
+            females = females.filter(data => data.rel == 'Father Side');
             let outcome = i < 2 ? checkEqual(list, males.filter(data => data.gen == i)[0]) ?
               [males.filter(data => data.gen == i), females.filter(data => data.gen == i)]  : [males.filter(data => data.gen == i)] : [males.filter(data => data.gen == i)]
             return { array:outcome, force: i < 2 ? checkEqual(list, outcome[0][0]) : false }
@@ -98,9 +102,13 @@ function Cart() {
         for(let i = -1; i >= -3; --i){
           for (let j = i; j < i+2; j++) {
             if(males.filter(data => data.gen == j && data.rel == 'Both Side').length !== 0){
+              males = males.filter(data => data.rel == 'Both Side');
+              females = females.filter(data => data.rel == 'Both Side');
               let outcome = [males.filter(data => data.gen == j)]
             return { array:outcome, force:false }
             } else if(males.filter(data => data.gen == j && data.rel == 'Father Side').length !== 0){
+              males = males.filter(data => data.rel == 'Father Side');
+              females = females.filter(data => data.rel == 'Father Side');
               let outcome = [males.filter(data => data.gen == j)]
             return { array:outcome, force:false }
             }
@@ -480,13 +488,13 @@ function Cart() {
 
       switch(data.title){
 
-        case 'الأخت الشقيقة': if(list.filter(info => info.con == 'leaf' && info.sex == 'female').length == 0){
+        case 'الأخت الشقيقة': if(!checkForce(list, data) && list.filter(info => (info.con == 'leaf' && info.sex == 'male') || (info.con == 'root' && info.sex == 'male')).length == 0 && list.filter(info => info.con == 'leaf' && info.sex == 'female').length !== 0){
           confirm = true;
           IDs.push(data.ID);
         }
         break;
 
-        case 'الأخت لأب': if(list.filter(info => info.con == 'leaf' && info.sex == 'female').length == 0){
+        case 'الأخت لأب': if(!checkForce(list, data) && list.filter(info => (info.con == 'leaf' && info.sex == 'male') || (info.con == 'root' && info.sex == 'male') || (info.con == 'sibling' && info.rel == 'Both Side')).length == 0 && list.filter(info => info.con == 'leaf' && info.sex == 'female').length !== 0){
           confirm = true;
           IDs.push(data.ID);
         }

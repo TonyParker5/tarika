@@ -149,7 +149,7 @@ function HomePage() {
             setText(<p>لحذف العناصر إضغط على العناصر بالصندوق</p>)
         } else {
             setNext([]);
-            setText(<p>إختر الورثة, ويمكن زيادة العدد بالضغل المتكرر</p>);
+            setText(<p>إختر الورثة</p>);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [array.length])
