@@ -1,0 +1,99 @@
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 10;
+  transition: 0.3s ease;
+  background: var(--glass-bg);
+  backdrop-filter: saturate(150%) blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.header .container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.header .container .icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.header-login-btn {
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+.header-login-btn:hover {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  color: var(--brand-contrast);
+}
+
+.header .container .logo {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+}
+
+.header .container .logo img {
+  padding: 4px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--border);
+}
+
+.header .container div svg {
+  width: 22px;
+  height: 22px;
+  color: var(--text);
+}
+
+.option-container {
+  position: relative;
+  display: block;
+  width: 65vw;
+  transform: translate(-110%, 0%);
+  background-color: var(--surface);
+  text-align: right;
+  padding: 24px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.option-container ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  list-style: none;
+}
+
+.option-container ul li a {
+  text-decoration: none;
+  color: var(--text);
+  font-size: 18px;
+  -webkit-user-select: none;
+}
+.close-option {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+}
+.comment-svg{
+  margin-left:-95%;
+}
