@@ -23,9 +23,9 @@ function Cart() {
       for (let i = 0; i<data.length; i++){
         for (let j = 0; j<data.length; j++){
           for (let k = 0; k<data.length; k++){
-            if (data[i].title == 'الزوج' && data[j].title == 'الأم' && data[k].title == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
+            if (data[i].name == 'الزوج' && data[j].name == 'الأم' && data[k].name == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
               return true;
-            }else if (data[i].title == 'الزوجة' && data[j].title == 'الأم' && data[k].title == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
+            }else if (data[i].name == 'الزوجة' && data[j].name == 'الأم' && data[k].name == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
               return true
             }
           }

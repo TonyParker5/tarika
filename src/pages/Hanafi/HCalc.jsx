@@ -22,9 +22,9 @@ function Cart() {
       for (let i = 0; i<data.length; i++){
         for (let j = 0; j<data.length; j++){
           for (let k = 0; k<data.length; k++){
-            if (data[i].title == 'الزوج' && data[j].title == 'الأم' && data[k].title == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
+            if (data[i].name == 'الزوج' && data[j].name == 'الأم' && data[k].name == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
               return true;
-            }else if (data[i].title == 'الزوجة' && data[j].title == 'الأم' && data[k].title == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
+            }else if (data[i].name == 'الزوجة' && data[j].name == 'الأم' && data[k].name == 'الأب' && list.filter(data => data.con == 'leaf').length == 0){
               return true
             }
           }
@@ -206,10 +206,7 @@ function Cart() {
       let confirm = false;
 
       switch(data.title){
-        case 'الزوج': if(list.filter(info => info.con == 'leaf').length == 0 && !checkO(list) && kinship === false){
-          confirm = true;
-          IDs.push(data.ID);
-        } else if(kinship === true){
+        case 'الزوج': if(list.filter(info => info.con == 'leaf').length == 0 && !checkO(list)){
           confirm = true;
           IDs.push(data.ID);
         }
@@ -263,16 +260,13 @@ function Cart() {
       let confirm = false;
       
       switch(data.title){
-        case 'الزوج': if(list.filter(info => info.con == 'leaf').length > 0 && !checkO(list) && kinship === false){
+        case 'الزوج': if(list.filter(info => info.con == 'leaf').length > 0 && !checkO(list)){
           confirm = true;
           IDs.push(data.ID);
         }
         break;
 
-        case 'الزوجة': if(list.filter(info => info.con == 'leaf').length == 0 && !checkO(list) && kinship === false){
-          confirm = true;
-          IDs.push(data.ID);
-        } else if(kinship === true){
+        case 'الزوجة': if(list.filter(info => info.con == 'leaf').length == 0 && !checkO(list)){
           confirm = true;
           IDs.push(data.ID);
         }
@@ -296,7 +290,7 @@ function Cart() {
       let confirm = false;
       
       switch(data.title){
-        case 'الزوجة': if(list.filter(info => info.con == 'leaf').length > 0 && !checkO(list) && kinship === false){
+        case 'الزوجة': if(list.filter(info => info.con == 'leaf').length > 0 && !checkO(list)){
           confirm = true;
           IDs.push(data.ID);
         }
