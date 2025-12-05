@@ -17,7 +17,6 @@ function Cart() {
   const [siblingshare, setSS] = useState(false);
   const [akdaria, setAK] = useState(false);
 
-
   useEffect(()=>{
 
     function checkO(data){
@@ -67,7 +66,7 @@ function Cart() {
           if(males.filter(data => data.gen == i).length !== 0){
             let outcome = checkEqual(list, males.filter(data => data.gen == i)[0]) ?
               [males.filter(data => data.gen == i), females.filter(data => data.gen == i)]  : [males.filter(data => data.gen == i)]
-            return { array:outcome, force:checkEqual(list, outcome[0][0]) }
+              return { array:outcome, force:checkEqual(list, outcome[0][0]) }
           }
         }
       } else if(males.filter(data => data.con == 'root').length !== 0 && !checkO(list)){

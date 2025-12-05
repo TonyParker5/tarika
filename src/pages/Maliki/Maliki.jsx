@@ -8,7 +8,6 @@ function HomePage() {
     const navigate = useNavigate();
     const [list, setList] = useState([]);
     const [array, setArray] = useState([]);
-    const [next, setNext] = useState([]);
     const [text, setText] = useState([]);
 
     // --- Section visibility controls ---
@@ -38,7 +37,7 @@ function HomePage() {
                 ID = ID + 1;
             }
         }
-        //triblr check
+        //trible check
         for (let i = 0; i < list.length; i++) {
             if (ID == list[i].ID) {
                 ID = ID + 1;
@@ -103,8 +102,6 @@ function HomePage() {
 
     useEffect(() => {
 
-        sections.kinship ? setList(list) : setList(list.filter(data => data.kin == false));
-
         let group = {};
         for (let i = 0; i < list.length; i++) {
             const name = list[i].name;
@@ -128,7 +125,7 @@ function HomePage() {
         }
 
         setArray(newArray);
-    }, [list, sections.kinship]);
+    }, [list]);
 
     // auto-disable "ذوي الأرحام" when any other (non-marriage) section exists (checkbox true)
     useEffect(() => {
@@ -141,14 +138,15 @@ function HomePage() {
         // allow kinship checkbox to be toggled again
         setKinshipDisabled(false);
       }
+
+        kinshipDisabled ? setList(list) : setList(list.filter(data => data.kin == false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [sections.branches, sections.roots, sections.siblings, sections.uncle, sections.obedience]);
 
     useEffect(() => {
         if (array.length != 0) {
-            setNext(<button className="light-button" onClick={() => navigate('/MCalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button>);
             setText(<p>لحذف العناصر إضغط على العناصر بالصندوق</p>)
         } else {
-            setNext([]);
             setText(<p>إختر الورثة</p>);
         }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,7 +166,7 @@ function HomePage() {
                 {array}
             </div>
             <div id="total">
-                {next} <br />
+                <button className="light-button" onClick={() => navigate('/MCalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button> <br />
                 {text}
             </div>
 
@@ -177,7 +175,7 @@ function HomePage() {
                     <tr>
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
-                                <input type="checkbox" checked={sections.marriage}/>
+                                <input type="checkbox" checked={sections.marriage} readOnly/>
                                 الزواج
                             </label>
                         </td>
@@ -197,7 +195,7 @@ function HomePage() {
                     <tr>
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
-                                <input type="checkbox" checked={sections.branches}/>
+                                <input type="checkbox" checked={sections.branches} readOnly/>
                                 &nbsp;الفروع
                             </label>
                         </td>
@@ -225,7 +223,7 @@ function HomePage() {
                     <tr>
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
-                                <input type="checkbox" checked={sections.roots}/>
+                                <input type="checkbox" checked={sections.roots} readOnly/>
                                 &nbsp;الأصول
                             </label>
                         </td>
@@ -261,7 +259,7 @@ function HomePage() {
                     <tr>
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
-                                <input type="checkbox" checked={sections.siblings}/>
+                                <input type="checkbox" checked={sections.siblings} readOnly/>
                                 &nbsp;الإخوة
                             </label>
                         </td>
@@ -295,7 +293,7 @@ function HomePage() {
                     <tr>
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
-                                <input type="checkbox" checked={sections.uncle}/>
+                                <input type="checkbox" checked={sections.uncle} readOnly/>
                                 &nbsp;العمومة
                             </label>
                         </td>
@@ -323,7 +321,7 @@ function HomePage() {
                     <tr>
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
-                                <input type="checkbox" checked={sections.obedience}/>
+                                <input type="checkbox" checked={sections.obedience} readOnly/>
                                 &nbsp;الولاء
                             </label>
                         </td>
@@ -343,7 +341,7 @@ function HomePage() {
                     <tr>
                         <td colSpan={2}>
                             <label style={{margin:'0 6px', opacity: kinshipDisabled ? 0.6 : 1}}>
-                                <input type="checkbox" checked={sections.kinship} disabled={kinshipDisabled}/>
+                                <input type="checkbox" checked={sections.kinship} disabled={kinshipDisabled} readOnly/>
                                 &nbsp;ذوي الأرحام 
                             </label>
                         </td>
