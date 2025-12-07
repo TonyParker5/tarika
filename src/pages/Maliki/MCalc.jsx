@@ -38,8 +38,8 @@ function Cart() {
       for (let i = 0; i<data.length; i++){
         if (data[i].gen == compare.gen && data[i].con == compare.con && data[i].rel == compare.rel && data[i].sex != compare.sex){
           return true
-        } else if (compare.gen > 1 && data[i].gen - compare.gen == 1 && data[i].con == compare.con && data[i].rel == undefined && data[i].sex == 'male'){
-          return true
+        } else {
+          return false
         }
       }
     }
@@ -47,10 +47,10 @@ function Cart() {
     function checkEqual(data, compare){
       data = data.filter(item => item.ID !== compare.ID)
       for (let i = 0; i<data.length; i++){
-        if (data[i].gen == compare.gen && data[i].con == compare.con && data[i].rel == compare.rel && data[i].sex == 'female'){
+        if (data[i].gen == compare.gen && data[i].con == compare.con && data[i].rel == compare.rel && data[i].sex == compare.sex){
           return true
-        } else if (compare.gen > 2 && compare.gen - data[i].gen == 1 && data[i].con == compare.con && data[i].rel == undefined && data[i].sex == 'female'){
-          return true
+        } else {
+          return false
         }
       }
     }
@@ -64,9 +64,9 @@ function Cart() {
         females = females.filter(data => data.con == 'leaf');
         for (let i = 1; i <= 3; i++) {
           if(males.filter(data => data.gen == i).length !== 0){
-            let outcome = checkEqual(list, males.filter(data => data.gen == i)[0]) ?
+            let outcome = checkForce(list, males.filter(data => data.gen == i)[0]) ?
               [males.filter(data => data.gen == i), females.filter(data => data.gen == i)]  : [males.filter(data => data.gen == i)]
-              return { array:outcome, force:checkEqual(list, outcome[0][0]) }
+              return { array:outcome, force:checkForce(list, outcome[0][0]) }
           }
         }
       } else if(males.filter(data => data.con == 'root').length !== 0 && !checkO(list)){
@@ -84,15 +84,15 @@ function Cart() {
           if(males.filter(data => data.gen == i && data.rel == 'Both Side').length !== 0){
             males = males.filter(data => data.rel == 'Both Side');
             females = females.filter(data => data.rel == 'Both Side');
-            let outcome = i < 2 ? checkEqual(list, males.filter(data => data.gen == i)[0]) ?
+            let outcome = i < 2 ? checkForce(list, males.filter(data => data.gen == i)[0]) ?
               [males.filter(data => data.gen == i), females.filter(data => data.gen == i)]  : [males.filter(data => data.gen == i)] : [males.filter(data => data.gen == i)]
-            return { array:outcome, force: i < 2 ? checkEqual(list, outcome[0][0]) : false }
+            return { array:outcome, force: i < 2 ? checkForce(list, outcome[0][0]) : false }
           } else if(males.filter(data => data.gen == i && data.rel == 'Father Side').length !== 0){
             males = males.filter(data => data.rel == 'Father Side');
             females = females.filter(data => data.rel == 'Father Side');
-            let outcome = i < 2 ? checkEqual(list, males.filter(data => data.gen == i)[0]) ?
+            let outcome = i < 2 ? checkForce(list, males.filter(data => data.gen == i)[0]) ?
               [males.filter(data => data.gen == i), females.filter(data => data.gen == i)]  : [males.filter(data => data.gen == i)] : [males.filter(data => data.gen == i)]
-            return { array:outcome, force: i < 2 ? checkEqual(list, outcome[0][0]) : false }
+            return { array:outcome, force: i < 2 ? checkForce(list, outcome[0][0]) : false }
           }
         }
       } else if(males.filter(data => data.con == 'uncle' || data.con == 'cousin').length !== 0){
@@ -998,15 +998,15 @@ function Cart() {
         } else if(rendergroup[name].force === false){
           tableSubstitude.push(
             <tr key={rendergroup[name].data[0].ID}>
-              <td>{ Math.round(((worth / substitude * inheritage)) * 1000) / 1000 }</td>
-              <td>{ Math.round(((worth / substitude * 100)) * 1000) / 1000 }%</td>
+              <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+              <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[0].name}</td>
               <td rowSpan={count}>{share}</td>
             </tr>)
           for(let i=1;i<count;i++){tableSubstitude.push(
             <tr key={rendergroup[name].data[i].ID}>
-              <td>{ Math.round((((worth / substitude * inheritage))/count) * 1000) / 1000 }</td>
+              <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
               <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[i].name}</td>
@@ -1016,7 +1016,7 @@ function Cart() {
       } else {
         tableSubstitude.push(
           <tr key={rendergroup[name].data[0].ID}>
-            <td>{ Math.round((((worth / substitude * inheritage))/count) * 1000) / 1000 }</td>
+            <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
             <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
             <td>{ (worth/count) }</td>
             <td>{rendergroup[name].data[0]?.name}</td>
@@ -1026,7 +1026,7 @@ function Cart() {
         for(let i = 1; i < (rendergroup[name].count || 1); i++){
           tableSubstitude.push(
             <tr key={rendergroup[name].data[i].ID}>
-              <td>{ Math.round((((worth / substitude * inheritage))/count) * 1000) / 1000 }</td>
+              <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
               <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[i]?.name}</td>
