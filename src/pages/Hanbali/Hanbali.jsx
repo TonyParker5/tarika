@@ -166,7 +166,7 @@ function HomePage() {
                 {array}
             </div>
             <div id="total">
-                <button className="light-button" onClick={() => navigate('/ACalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button> <br />
+                {list.length > 0 ? <button className="light-button" onClick={() => navigate('/MCalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button> : ''} <br />
                 {text}
             </div>
 
@@ -176,7 +176,7 @@ function HomePage() {
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
                                 <input type="checkbox" readOnly checked={sections.marriage}/>
-                                الزواج
+                                الأزواج
                             </label>
                         </td>
                     </tr>
@@ -298,7 +298,7 @@ function HomePage() {
                         <td colSpan={2}>
                             <label style={{margin:'0 6px'}}>
                                 <input type="checkbox" readOnly checked={sections.uncle}/>
-                                &nbsp;العمومة
+                                &nbsp;الأعمام
                             </label>
                         </td>
                     </tr>

@@ -37,12 +37,11 @@ function Cart() {
     function checkForce(data, compare){
       data = data.filter(item => item.ID !== compare.ID)
       for (let i = 0; i<data.length; i++){
-        if (data[i].gen == compare.gen && data[i].con == compare.con && data[i].rel == compare.rel && data[i].sex != compare.sex){
+        if (data[i].gen == compare.gen && data[i].con == compare.con && data[i].rel == compare.rel && data[i].sex !== compare.sex){
           return true
-        } else {
-          return false
         }
       }
+      return false
     }
     
     function checkEqual(data, compare){
@@ -50,10 +49,9 @@ function Cart() {
       for (let i = 0; i<data.length; i++){
         if (data[i].gen == compare.gen && data[i].con == compare.con && data[i].rel == compare.rel && data[i].sex == compare.sex){
           return true
-        } else {
-          return false
         }
       }
+      return false
     }
 
     function priorety(){
@@ -885,7 +883,7 @@ function Cart() {
             const upper = group[name].item.upper;
             const lower = group[name].item.lower;
             if(group[name].data[0].con !== 'marriage') { 
-              group[name] = { ...group[name], item:{...group[name].item, worth: calc * (upper / lower)} }
+              group[name] = { ...group[name], item:{...group[name].item, worth: calc * (upper / lower), share:'ف ر'} }
               mus += calc * (upper / lower); 
             }
           }
@@ -913,11 +911,9 @@ function Cart() {
           for(const name in group){
             const worth = group[name].item.worth;
             group[name].data[0].con == 'marriage' ? 
-              group[name] = { ...group[name], item:{...group[name].item, worth: worth*mus,
-                  }}
+              group[name] = { ...group[name], item:{...group[name].item, worth: worth*mus}}
             :
-              group[name] = { ...group[name], item:{...group[name].item, worth: worth*sum,
-                  }}
+              group[name] = { ...group[name], item:{...group[name].item, worth: worth*sum, share:'ف ر'}}
           }
         }
         count > 0 ? setDec(substitude) : setDec(1);
@@ -963,10 +959,17 @@ function Cart() {
       substitude = substitude * breaking;
 
       substitude = substitude || 1; // avoid zero
-      const share = rendergroup[name].item.share;
+      const share = rendergroup[name].item.share == 'ب' ? 'الباقي' :
+      rendergroup[name].item.share == 'ع' ? 'عصبة' :
+      rendergroup[name].item.share == 'م' ? 'محجوب' :
+      rendergroup[name].item.share == 'ف ر' ? 'بالرد' : 
+      rendergroup[name].item.share == '1/3 ب' ? '1/3 الباقي' : 
+      rendergroup[name].item.share == '2/3 ب' ? '2/3 الباقي' : rendergroup[name].item.share;
+
       const worth = rendergroup[name].item.worth;
       const count = rendergroup[name].count;
-      if(share === 'ع' || share === 'ب'){
+
+      if(share === 'عصبة' || share === 'الباقي'){
         if(rendergroup[name].force === true){
           let mcount = rendergroup[name].item.mcount;
           let fcount = rendergroup[name].item.fcount;
@@ -974,24 +977,24 @@ function Cart() {
           let fworth = worth/count;
           tableSubstitude.push(
             <tr key={rendergroup[name].mdata[0].ID}>
-              <td>{ Math.round(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
-              <td>{ Math.round((mworth / substitude * 100) * 1000) / 1000 }%</td>
+              <td>{ Math.floor(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
+              <td>{ ((mworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (mworth) }</td>
               <td>{rendergroup[name].mdata[0].name}</td>
               <td rowSpan={mcount+fcount}>{share}</td>
             </tr>)
           for(let i=1;i<mcount;i++){tableSubstitude.push(
             <tr key={rendergroup[name].mdata[i].ID}>
-              <td>{ Math.round(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
-              <td>{ Math.round((mworth / substitude * 100) * 1000) / 1000 }%</td>
+              <td>{ Math.floor(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
+              <td>{ Math.floor((mworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (mworth) }</td>
               <td>{rendergroup[name].mdata[i].name}</td>
             </tr>
           )}
           for(let i=0;i<fcount;i++){tableSubstitude.push(
             <tr key={rendergroup[name].fdata[i].ID}>
-              <td>{ Math.round((fworth / substitude * inheritage) * 1000) / 1000 }</td>
-              <td>{ Math.round((fworth / substitude * 100) * 1000) / 1000 }%</td>
+              <td>{ Math.floor((fworth / substitude * inheritage) * 1000) / 1000 }</td>
+              <td>{ Math.floor((fworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (fworth) }</td>
               <td>{rendergroup[name].fdata[i].name}</td>
             </tr>
@@ -999,16 +1002,16 @@ function Cart() {
         } else if(rendergroup[name].force === false){
           tableSubstitude.push(
             <tr key={rendergroup[name].data[0].ID}>
-              <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
-              <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
+              <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+              <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[0].name}</td>
               <td rowSpan={count}>{share}</td>
             </tr>)
           for(let i=1;i<count;i++){tableSubstitude.push(
             <tr key={rendergroup[name].data[i].ID}>
-              <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
-              <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
+              <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+              <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[i].name}</td>
             </tr>
@@ -1017,8 +1020,8 @@ function Cart() {
       } else {
         tableSubstitude.push(
           <tr key={rendergroup[name].data[0].ID}>
-            <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
-            <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
+            <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+            <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
             <td>{ (worth/count) }</td>
             <td>{rendergroup[name].data[0]?.name}</td>
             <td rowSpan={count}>{share}</td>
@@ -1027,8 +1030,8 @@ function Cart() {
         for(let i = 1; i < (rendergroup[name].count || 1); i++){
           tableSubstitude.push(
             <tr key={rendergroup[name].data[i].ID}>
-              <td>{ Math.round(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
-              <td>{ Math.round(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
+              <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+              <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[i]?.name}</td>
             </tr>
