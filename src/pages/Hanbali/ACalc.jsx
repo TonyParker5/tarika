@@ -962,7 +962,7 @@ function Cart() {
           tableSubstitude.push(
             <tr key={rendergroup[name].mdata[0].ID}>
               <td>{ Math.floor(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
-              <td>{ ((mworth / substitude * 100) * 1000) / 1000 }%</td>
+              <td>{ Math.floor((mworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (mworth) }</td>
               <td>{rendergroup[name].mdata[0].name}</td>
               <td rowSpan={mcount+fcount}>{share}</td>
