@@ -619,7 +619,7 @@ function Cart() {
 
       if(sum > calculation){
         setInc(sum);
-      } else if(list.filter(data => data.con == 'marriage').length !== 0){
+      } else if(sum < calculation && list.filter(data => data.con == 'marriage').length !== 0 &&list.filter(data => data.con !== 'marriage').length !== 0){
         let substitude = 1;
         let sum = 0;
         for(const name in group){
@@ -688,7 +688,7 @@ function Cart() {
           }
           setDec(substitude);
         }
-      } else {
+      } else if(sum < calculation){
         setDec(sum);
       }
     }
