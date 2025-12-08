@@ -214,7 +214,6 @@ function Cart() {
         case 'البنت': if(!checkForce(list, data) && !checkEqual(list, data)){
           confirm = true;
           IDs.push(data.ID);
-          console.log(checkForce(list, data));
         }
         break;
 
@@ -429,7 +428,7 @@ function Cart() {
         }
         break;
 
-        case 'بنت الإبن':if (daughterhalf && checkForce(list, data)){
+        case 'بنت الإبن':if (daughterhalf && !checkForce(list, data)){
           confirm = true;
           IDs.push(data.ID);
         }
@@ -819,14 +818,12 @@ function Cart() {
     function addWorth(){
       let sum = 0;
       let notomar = 0;
-      numbers = [];
 
       for(const name in group){
         const upper = group[name].item.upper;
         const lower = group[name].item.lower;
         const omar = group[name].item.omar;
         const share = group[name].item.share;
-        numbers.push(lower);
 
         if(upper / lower !== 1 && omar !== true && share !== 'م'){
           group[name] = { ...group[name], item:{...group[name].item, worth: calculation * (upper / lower)} }
@@ -841,13 +838,9 @@ function Cart() {
       }
 
       akdaria ? sum += 3 : sum += 0;
-      sum < calculation ? setDec(sum) : setInc(sum);
-    }
-    addWorth();
-
-    // apply other mutations to group (handleDecreament, Break) using baseCalc...
-    function handleDecreament(){ 
-      if(decreament != 0 && list.filter(data => data.con == 'marriage').length != 0){
+      if(sum > calculation){
+        setInc(sum);
+      } else if(list.filter(data => data.con == 'marriage').length !== 0){
         let substitude = 1;
         let sum = 0;
         for(const name in group){
@@ -860,7 +853,7 @@ function Cart() {
             sum = lower - upper;
             for(let n=0;n<count;n++){
               for(let i=0; i<numbers.length; i++){
-                if(numbers[i] == lower){
+                if(numbers[i] === lower){
                   numbers.splice(i,1); break;
                 }
               }
@@ -870,12 +863,11 @@ function Cart() {
         let calc = calculate(numbers);
         let mus = 0;
         let count = 0;
-        for(const name in group){ group[name].data[0].con != 'marriage'? count +=1 : count += 0}
+        for(const name in group){ group[name].data[0].con !== 'marriage'? count +=1 : count += 0}
         if(count == 1){
           for(const name in group){
             if(group[name].data[0].con !== 'marriage'){
-              group[name] = { ...group[name], item:{...group[name].item, worth: sum, 
-                share: 'ف. ر.' } }
+              group[name] = { ...group[name], item:{...group[name].item, worth: sum, share: 'ف ر' } }
             }
           }
         } else if(count > 1){
@@ -915,11 +907,13 @@ function Cart() {
             :
               group[name] = { ...group[name], item:{...group[name].item, worth: worth*sum, share:'ف ر'}}
           }
+          setDec(substitude);
         }
-        count > 0 ? setDec(substitude) : setDec(1);
+      } else {
+        setDec(sum);
       }
     }
-    handleDecreament();
+    addWorth();
 
     function Break(){
       let breaks = [];
@@ -962,7 +956,7 @@ function Cart() {
       const share = rendergroup[name].item.share == 'ب' ? 'الباقي' :
       rendergroup[name].item.share == 'ع' ? 'عصبة' :
       rendergroup[name].item.share == 'م' ? 'محجوب' :
-      rendergroup[name].item.share == 'ف ر' ? 'بالرد' : 
+      rendergroup[name].item.share == 'ف ر' ? 'ردا' : 
       rendergroup[name].item.share == '1/3 ب' ? '1/3 الباقي' : 
       rendergroup[name].item.share == '2/3 ب' ? '2/3 الباقي' : rendergroup[name].item.share;
 
