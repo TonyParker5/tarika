@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import "../../css/allawy.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // eslint-disable-next-line react-refresh/only-export-components
 function HomePage() {
     //the constants
     const navigate = useNavigate();
-    const [list, setList] = useState([]);
+    const location = useLocation();
+    const {fist} = location.state || { fist:[] };
+    const [list, setList] = useState(fist || []);
     const [array, setArray] = useState([]);
     const [text, setText] = useState([]);
 

@@ -1,9 +1,10 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../../css/allawy.css"
 import { useEffect, useState } from "react";
 
 function Cart() {
 
+  const navigate = useNavigate();
   const location = useLocation();
   const {list} = location.state || { list:[] };
   const {kinship} = location.state || { kinship:false };
@@ -13,7 +14,9 @@ function Cart() {
   const [breaking, setBr] = useState(1);
   const [increament, setInc] = useState(0);
   const [decreament, setDec] = useState(0);
-  const [inheritage, setInh] = useState(0);
+  const [inheritageM, setInM] = useState(0);
+  const [inheritageL, setInL] = useState(0);
+  const [inheritageA, setInA] = useState(0);
   const [akdaria, setAK] = useState(false);
 
 
@@ -941,12 +944,19 @@ function Cart() {
       const share = rendergroup[name].item.share == 'ب' ? 'الباقي' :
       rendergroup[name].item.share == 'ع' ? 'عصبة' :
       rendergroup[name].item.share == 'م' ? 'محجوب' :
-      rendergroup[name].item.share == 'ف ر' ? 'بالرد' : 
+      rendergroup[name].item.share == 'ف ر' ? 'ردا' : 
       rendergroup[name].item.share == '1/3 ب' ? '1/3 الباقي' : 
       rendergroup[name].item.share == '2/3 ب' ? '2/3 الباقي' : rendergroup[name].item.share;
 
       const worth = rendergroup[name].item.worth;
       const count = rendergroup[name].count;
+
+      let inheritage = [];
+      inheritage.push(
+          inheritageM === 0 ? '' : <tr>{ ' $ ' + Math.floor(((worth / substitude * inheritageM)/count) * 1000) / 1000 }</tr>,
+          inheritageL === 0 ? '' : <tr>{ ' # ' + Math.floor(((worth / substitude * inheritageL)/count) * 1000) / 1000 }</tr>,
+          inheritageA === 0 ? '' : <tr>{ ' * ' + Math.floor(((worth / substitude * inheritageA)/count) * 1000) / 1000 }</tr>
+        );
 
       if(share === 'عصبة' || share === 'الباقي'){
         if(rendergroup[name].force === true){
@@ -954,9 +964,15 @@ function Cart() {
           let fcount = rendergroup[name].item.fcount;
           let mworth = worth/count*2;
           let fworth = worth/count;
+          inheritage = [];
+          inheritage.push(
+              inheritageM === 0 ? '' : <tr>{ ' $ ' + Math.floor(((mworth / substitude * inheritageM)) * 1000) / 1000 }</tr>,
+              inheritageL === 0 ? '' : <tr>{ ' # ' + Math.floor(((mworth / substitude * inheritageL)) * 1000) / 1000 }</tr>,
+              inheritageA === 0 ? '' : <tr>{ ' * ' + Math.floor(((mworth / substitude * inheritageA)) * 1000) / 1000 }</tr>
+            );
           tableSubstitude.push(
             <tr key={rendergroup[name].mdata[0].ID}>
-              <td>{ Math.floor(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
+              <td>{ inheritage }</td>
               <td>{ Math.floor((mworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (mworth) }</td>
               <td>{rendergroup[name].mdata[0].name}</td>
@@ -964,15 +980,21 @@ function Cart() {
             </tr>)
           for(let i=1;i<mcount;i++){tableSubstitude.push(
             <tr key={rendergroup[name].mdata[i].ID}>
-              <td>{ Math.floor(((mworth / substitude * inheritage)) * 1000) / 1000 }</td>
+              <td>{ inheritage }</td>
               <td>{ Math.floor((mworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (mworth) }</td>
               <td>{rendergroup[name].mdata[i].name}</td>
             </tr>
           )}
+          inheritage = [];
+          inheritage.push(
+              inheritageM === 0 ? '' : <tr>{ ' $ ' + Math.floor(((fworth / substitude * inheritageM)) * 1000) / 1000 }</tr>,
+              inheritageL === 0 ? '' : <tr>{ ' # ' + Math.floor(((fworth / substitude * inheritageL)) * 1000) / 1000 }</tr>,
+              inheritageA === 0 ? '' : <tr>{ ' * ' + Math.floor(((fworth / substitude * inheritageA)) * 1000) / 1000 }</tr>
+            );
           for(let i=0;i<fcount;i++){tableSubstitude.push(
             <tr key={rendergroup[name].fdata[i].ID}>
-              <td>{ Math.floor((fworth / substitude * inheritage) * 1000) / 1000 }</td>
+              <td>{ inheritage }</td>
               <td>{ Math.floor((fworth / substitude * 100) * 1000) / 1000 }%</td>
               <td>{ (fworth) }</td>
               <td>{rendergroup[name].fdata[i].name}</td>
@@ -981,7 +1003,7 @@ function Cart() {
         } else if(rendergroup[name].force === false){
           tableSubstitude.push(
             <tr key={rendergroup[name].data[0].ID}>
-              <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+              <td>{ inheritage }</td>
               <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[0].name}</td>
@@ -989,7 +1011,7 @@ function Cart() {
             </tr>)
           for(let i=1;i<count;i++){tableSubstitude.push(
             <tr key={rendergroup[name].data[i].ID}>
-              <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+              <td>{ inheritage }</td>
               <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
               <td>{rendergroup[name].data[i].name}</td>
@@ -998,38 +1020,36 @@ function Cart() {
         }
       } else {
         tableSubstitude.push(
-          <tr key={rendergroup[name].data[0].ID}>
-            <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
-            <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
-            <td>{ (worth/count) }</td>
-            <td>{rendergroup[name].data[0]?.name}</td>
-            <td rowSpan={count}>{share}</td>
-          </tr>
-        );
-        for(let i = 1; i < (rendergroup[name].count || 1); i++){
-          tableSubstitude.push(
-            <tr key={rendergroup[name].data[i].ID}>
-              <td>{ Math.floor(((worth / substitude * inheritage)/count) * 1000) / 1000 }</td>
+            <tr key={rendergroup[name].data[0].ID}>
+              <td>{ inheritage }</td>
               <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
               <td>{ (worth/count) }</td>
-              <td>{rendergroup[name].data[i]?.name}</td>
+              <td>{rendergroup[name].data[0].name}</td>
+              <td rowSpan={count}>{share}</td>
+            </tr>)
+          for(let i=1;i<count;i++){tableSubstitude.push(
+            <tr key={rendergroup[name].data[i].ID}>
+              <td>{ inheritage }</td>
+              <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
+              <td>{ (worth/count) }</td>
+              <td>{rendergroup[name].data[i].name}</td>
             </tr>
-          );
-        }
+          )}
       }
     } // end for rendergroup
 
     setTable(tableSubstitude);
 
-  },[akdaria, breaking, calculation, decreament, group, increament, inheritage, kinship, list]);
+  },[akdaria, breaking, calculation, decreament, group, increament, inheritageA, inheritageL, inheritageM, kinship, list]);
 
   return (
     <div className='container'>
+      <button className="light-button" onClick={() => navigate('/Hanbali', { state: { fist:list } })}>العودة لصفحة الإختيار</button>
       <div id="items">
         <table>
           <thead style={{backgroundColor:"lightgrey"}}>
             <tr>
-              <td>{ inheritage > 1000000000 ? 'تبارك الله, بيليونير' : ''}</td>
+              <td>{ inheritageM > 1000000000 ? 'تبارك الله, بيليونير' : ''}</td>
               <td>100%</td>
               <td>{ (increament + decreament) === 0 ? calculation*breaking :
                  increament > calculation ? `بالعول ${increament*breaking}` :
@@ -1043,9 +1063,13 @@ function Cart() {
           </tbody>
         </table>
       </div>
-      <div id="total" style={{marginBottom:'50px'}}>
-        <input name="inheritage" type="number" onKeyUp={(e) => {setInh(Number(e.target.value) || 0)}} placeholder="قيمة الميراث"/>
-        <label htmlFor=""> :أدخل قيمة الميراث</label>
+      <div id="total" style={{marginBottom:'50px', width:'100%', textAlign:'right'}}>
+        <label style={{width:'20%'}}>: الإرث من المال $</label>
+        <input style={{width:'100%'}} name="inheritageM" type="number" onKeyUp={(e) => {setInM(Number(e.target.value) || 0)}} placeholder="قيمة الميراث من المال"/> <br />
+        <label style={{width:'20%'}}>: الإرث من الأرض #</label>
+        <input style={{width:'100%'}} name="inheritageL" type="number" onKeyUp={(e) => {setInL(Number(e.target.value) || 0)}} placeholder="قيمة الميراث من الأرض"/> <br />
+        <label style={{width:'20%'}}>: الإرث من الماشية *</label>
+        <input style={{width:'100%'}} name="inheritageA" type="number" onKeyUp={(e) => {setInA(Number(e.target.value) || 0)}} placeholder="قيمة الميراث من الماشية"/>
       </div>
     </div>
   );
