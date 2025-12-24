@@ -168,7 +168,7 @@ function HomePage() {
                 {array}
             </div>
             <div id="total">
-                {list.length > 0 ? <button className="light-button" onClick={() => navigate('/MCalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button> : ''} <br />
+                {list.length > 0 ? <button className="light-button" onClick={() => navigate('/SCalc', { state: { list, kinship: sections.kinship } })}>بدء عملية الحساب</button> : ''} <br />
                 {text}
             </div>
 
