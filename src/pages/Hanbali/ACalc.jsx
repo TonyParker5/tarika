@@ -366,6 +366,7 @@ function Cart() {
 //the one third measurements
     list.forEach(data => {
       let confirm = false;
+      let motherS = false;
       let name;
 
       switch(data.title){
@@ -378,6 +379,7 @@ function Cart() {
         default: if(data.title == 'الأخ لأم' || data.title == 'الأخت لأم'){
           if(list.filter(info => info.con == 'leaf' || (info.con == 'root' && info.sex == 'male')).length == 0 && list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side').length > 1){
             confirm = true;
+            motherS = true;
             name = 'الإخوة لأم';
             IDs.push(data.ID);
           }
@@ -386,8 +388,10 @@ function Cart() {
       }
 
       if(confirm){
-        group[name] = { count:list.filter(info => info.title == data.title).length, 
-          data: data.title == ('الأخ لأم' || 'الأخت لأم') ? list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side') : list.filter(info => info.title == data.title), item: {
+        group[name] = { 
+          count:motherS ? list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side').length : list.filter(info => info.title == data.title).length,
+          data: motherS ? list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side') : list.filter(info => info.title == data.title), 
+          item: {
           ID: data.ID,
           name: data.title,
           share: '1/3',
@@ -529,7 +533,7 @@ function Cart() {
         mcount, fcount
       }}
       numbers.push(1);
-      IDs = [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)]
+      IDs = priorety().force ? [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)] : [...IDs, ...priorety().array[0].map(data => data.ID)];
     } else if(priorety().array.length !== 0){
       count = priorety().array[0].length;
       group[priorety().array[0][0].title] = { count, data:priorety().array[0], force: false, item: {
@@ -540,7 +544,7 @@ function Cart() {
         lower: 1
       }}
       numbers.push(1);
-      IDs = [...IDs, ...priorety().array[0].map(data => data.ID)]
+      IDs = priorety().force ? [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)] : [...IDs, ...priorety().array[0].map(data => data.ID)];
     }
 
     let siblings = list.filter(data => data.con == 'sibling' && data.rel == 'Both Side');

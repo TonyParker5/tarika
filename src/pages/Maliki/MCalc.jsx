@@ -366,6 +366,7 @@ function Cart() {
 //the one third measurements
     list.forEach(data => {
       let confirm = false;
+      let motherS = false;
       let name;
 
       switch(data.title){
@@ -378,6 +379,7 @@ function Cart() {
         default: if(data.title == 'الأخ لأم' || data.title == 'الأخت لأم'){
           if(list.filter(info => info.con == 'leaf' || (info.con == 'root' && info.sex == 'male')).length == 0 && list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side').length > 1){
             confirm = true;
+            motherS = true;
             name = 'الإخوة لأم';
             IDs.push(data.ID);
           }
@@ -386,8 +388,10 @@ function Cart() {
       }
 
       if(confirm){
-        group[name] = { count:list.filter(info => info.title == data.title).length, 
-          data: data.title == ('الأخ لأم' || 'الأخت لأم') ? list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side') : list.filter(info => info.title == data.title), item: {
+        group[name] = { 
+          count:motherS ? list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side').length : list.filter(info => info.title == data.title).length,
+          data: motherS ? list.filter(info => info.con == 'sibling' && info.rel == 'Mother Side') : list.filter(info => info.title == data.title), 
+          item: {
           ID: data.ID,
           name: data.title,
           share: '1/3',
@@ -519,19 +523,20 @@ function Cart() {
       trueone += calculate(numbers) / trues[i];
       trues = [trues[i], ...trues.filter(data => data !== trues[i])];
     }
-    if(group['الإخوة لأم'] && priorety().array[0][0].title == 'الأخ الشقيق' && trueone == calculate(numbers)){
+    let sharing = priorety().array.length !== 0 ? priorety().array[0][0].title === 'الأخ الشقيق' ? true : false : false;
+    if(group['الإخوة لأم'] && sharing && trueone == calculate(numbers)){
       const count = group['الإخوة لأم'].count;
       const data = group['الإخوة لأم'].data;
       const brothers = priorety().force ? priorety().array[0].length + priorety().array[1].length : priorety().array[0].length;
-      group['الإخوة لأم'] = { 
+      group['الإخوة لأم'] = {
         ...group['الإخوة لأم'],
         count: count + brothers,
         MSS: count,
-        data:priorety().force ? [...data, priorety().array[0][0], priorety().array[1][0]] : [...data, priorety().array[0][0]]
+        data: priorety().force ? [...data, ...priorety().array[0], ...priorety().array[1]] : [...data, ...priorety().array[0]]
       }
       setSS(true);
       numbers.push(3);
-      IDs = [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)]
+      IDs = priorety().force ? [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)] : [...IDs, ...priorety().array[0].map(data => data.ID)];
     } else if(priorety().array.length !== 0 && priorety().force){
       let mcount = priorety().array[0].length;
       let fcount = priorety().array[1].length;
@@ -544,7 +549,7 @@ function Cart() {
         mcount, fcount
       }}
       numbers.push(1);
-      IDs = [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)]
+      IDs = priorety().force ? [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)] : [...IDs, ...priorety().array[0].map(data => data.ID)];
     } else if(priorety().array.length !== 0){
       count = priorety().array[0].length;
       group[priorety().array[0][0].title] = { count, data:priorety().array[0], force: false, item: {
@@ -555,21 +560,26 @@ function Cart() {
         lower: 1
       }}
       numbers.push(1);
-      IDs = [...IDs, ...priorety().array[0].map(data => data.ID)]
+      IDs = priorety().force ? [...IDs, ...priorety().array[0].map(data => data.ID), ...priorety().array[1].map(data => data.ID)] : [...IDs, ...priorety().array[0].map(data => data.ID)];
     }
 
     let siblings = list.filter(data => data.con == 'sibling' && data.rel == 'Both Side');
     let malesibling = list.filter(data => data.con == 'sibling' && data.rel == 'Both Side' && data.sex == 'male');
     let femalesibling = list.filter(data => data.con == 'sibling' && data.rel == 'Both Side' && data.sex == 'female');
     let FSS = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side');
+    let MFSS = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side' && data.sex == 'male');
+    let FFSS = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side' && data.sex == 'female');
+    siblings = siblings.length == 0 ? FSS : siblings;
+    malesibling = malesibling.length == 0 ? MFSS : malesibling;
+    femalesibling = femalesibling.length == 0 ? FFSS : femalesibling;
     let rest = 0;
     for (let i = 0; i < trues.length; i++) {
       trues[i] > 1 ? rest += calculate(numbers) / trues[i]:'do nothhing';
       trues = [trues[i], ...trues.filter(data => data !== trues[i])];
     }
     for(const name in group){
-      if(group[name].data[0].con == 'root' && group[name].data[0].gen < -1 && siblings.length !== 0){
-        if( (calculate(numbers) - rest) / (malesibling.length*2 + femalesibling.length + 2) * 2 <= (calculate(numbers)/6) ){
+      if(group[name].data[0].con == 'root' && group[name].data[0].gen < -1 && group[name].data[0].sex == 'male' && siblings.length !== 0){
+        if( (Math.max(trues) - rest) / (malesibling.length*2 + femalesibling.length + 2) * 2 <= (calculate(numbers)/6) ){
           if(malesibling.length > 0){
             group[name] = {
               ...group[name],
@@ -612,8 +622,6 @@ function Cart() {
             IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
             numbers.push(1);
           } else {
-            femalesibling.length == 0 ? femalesibling = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side' && data.sex == 'female') : '';
-            femalesibling.length == 1 ? setAK(true) : '';
             group[name] = femalesibling.length == 1 ? { 
               count: 3,
               mdata: [...group[name].data],
@@ -669,49 +677,49 @@ function Cart() {
             force : false
           }
           IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
-          if(FSS.length > 0 && femalesibling.length > 0 && malesibling.length == 0){
-            group[name] = {
-              count: 1,
-              data: list.filter(data => data.title == name),
-              item: {
-                ID: group[name].item.ID,
-                name: 'الجد',
-                share: 'ب 1/3',
-                upper: 1,
-                lower: 3,
-                omar: true
-              }
-            }
-            numbers.push(3);
-            group[femalesibling[0].title] = {
-              count: femalesibling.length,
-              data: femalesibling,
-              item: {
-                ID: femalesibling[0].ID,
-                name: femalesibling[0].title,
-                share: femalesibling.length == 1 ? 'ب 1/2' : 'ب 2/3',
-                upper: femalesibling.length == 1 ? 1 : 2,
-                lower: femalesibling.length == 1 ? 2 : 3,
-                omar: true
-              }
-            }
-            IDs = [...IDs, ...femalesibling.map(data => data.ID)]
-            femalesibling.length == 1 ? numbers.push(2) : numbers.push(3);
-            group[FSS[0].title] = {
-              count: FSS.length,
-              data: FSS,
-              item: {
-                ID: FSS[0].ID,
-                name: FSS[0].title,
-                share: 'ب',
-                upper: 1,
-                lower: 1
-              },
-              force: false
-            }
-            IDs = [...IDs, ...FSS.map(data => data.ID)]
-            numbers.push(1);
-          }
+          // if(FSS.length > 0 && femalesibling.length > 0 && malesibling.length == 0){
+          //   group[name] = {
+          //     count: 1,
+          //     data: list.filter(data => data.title == name),
+          //     item: {
+          //       ID: group[name].item.ID,
+          //       name: 'الجد',
+          //       share: 'ب 1/3',
+          //       upper: 1,
+          //       lower: 3,
+          //       omar: true
+          //     }
+          //   }
+          //   numbers.push(3);
+          //   group[femalesibling[0].title] = {
+          //     count: femalesibling.length,
+          //     data: femalesibling,
+          //     item: {
+          //       ID: femalesibling[0].ID,
+          //       name: femalesibling[0].title,
+          //       share: femalesibling.length == 1 ? 'ب 1/2' : 'ب 2/3',
+          //       upper: femalesibling.length == 1 ? 1 : 2,
+          //       lower: femalesibling.length == 1 ? 2 : 3,
+          //       omar: true
+          //     }
+          //   }
+          //   IDs = [...IDs, ...femalesibling.map(data => data.ID)]
+          //   femalesibling.length == 1 ? numbers.push(2) : numbers.push(3);
+          //   group[FSS[0].title] = {
+          //     count: FSS.length,
+          //     data: FSS,
+          //     item: {
+          //       ID: FSS[0].ID,
+          //       name: FSS[0].title,
+          //       share: 'ب',
+          //       upper: 1,
+          //       lower: 1
+          //     },
+          //     force: false
+          //   }
+          //   IDs = [...IDs, ...FSS.map(data => data.ID)]
+          //   numbers.push(1);
+          // }
           numbers.push(1);
         } else if(malesibling.length*2 + femalesibling.length > 4){
           group[name] = {
@@ -1038,7 +1046,7 @@ function Cart() {
             <tr key={rendergroup[name].data[0].ID}>
               <td>{ inheritage }</td>
               <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
-              <td>{ (worth/count) }</td>
+              <td>{ Math.round(worth/count) }</td>
               <td>{rendergroup[name].data[0].name}</td>
               <td rowSpan={count}>{share}</td>
             </tr>)
@@ -1046,7 +1054,7 @@ function Cart() {
             <tr key={rendergroup[name].data[i].ID}>
               <td>{ inheritage }</td>
               <td>{ Math.floor(((worth / substitude * 100)/ count) * 1000) / 1000 }%</td>
-              <td>{ (worth/count) }</td>
+              <td>{ Math.round(worth/count) }</td>
               <td>{rendergroup[name].data[i].name}</td>
             </tr>
           )}

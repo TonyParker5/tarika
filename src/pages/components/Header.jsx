@@ -15,7 +15,7 @@ function Header() {
         </Link>
 
         <div className="brand">
-          <h2 style={{paddingRight:'5px', paddingLeft:'5px'}}>تركة - لحساب قيمة الميراث</h2>
+          <h3 style={{paddingRight:'5px', paddingLeft:'5px'}}>تركة - لحساب قيمة الميراث</h3>
           <p>*نموذج أولي*</p>
         </div>
 
