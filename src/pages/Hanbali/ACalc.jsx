@@ -551,29 +551,60 @@ function Cart() {
     let malesibling = list.filter(data => data.con == 'sibling' && data.rel == 'Both Side' && data.sex == 'male');
     let femalesibling = list.filter(data => data.con == 'sibling' && data.rel == 'Both Side' && data.sex == 'female');
     let FSS = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side');
-    let rest = 0;
-    for (let i = 0; i < trues.length; i++) {
-      trues[i] > 1 ? rest += calculate(numbers) / trues[i]:'do nothhing';
-      trues = [trues[i], ...trues.filter(data => data !== trues[i])];
+    let MFSS = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side' && data.sex == 'male');
+    let FFSS = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side' && data.sex == 'female');
+    siblings = siblings.length == 0 ? FSS : siblings;
+    malesibling = malesibling.length == 0 ? MFSS : malesibling;
+    femalesibling = femalesibling.length == 0 ? FFSS : femalesibling;
+    let occupied = 0;
+    trues = [];
+    for(const name in group){
+      if(group[name].data[0].con !== 'root' || group[name].data[0].gen > -1 || group[name].data[0].sex !== 'male'){
+      trues.push(group[name].item.lower)}
     }
     for(const name in group){
-      if(group[name].data[0].con == 'root' && group[name].data[0].gen < -1 && siblings.length !== 0){
-        if( (calculate(numbers) - rest) / (malesibling.length*2 + femalesibling.length + 2) * 2 <= (calculate(numbers)/6) ){
-          if(malesibling.length > 0){
+      if(group[name].data[0].con !== 'root' || group[name].data[0].gen > -1 || group[name].data[0].sex !== 'male'){
+      occupied += calculate(trues) * group[name].item.upper / group[name].item.lower}
+    }
+    let rest = calculate(trues) - occupied;
+    let mass = (malesibling.length*2 + femalesibling.length + 2)/2;
+    for(const name in group){
+      if(group[name].data[0].con == 'root' && group[name].data[0].gen < -1 && group[name].data[0].sex == 'male' && siblings.length !== 0){
+        if(occupied == 0){
+          if(malesibling.length*2 + femalesibling.length <= 4){
+            group[name] = {
+              count: femalesibling.length > 0 ? malesibling.length*2 + femalesibling.length + 2 : malesibling.length + 1,
+              data:  femalesibling.length > 0 ? [...group[name].data, ...malesibling, ...femalesibling] : [...group[name].data, ...malesibling],
+              mdata: [...group[name].data, ...malesibling],
+              fdata: femalesibling,
+              item: {
+                ID: group[name].data.ID,
+                name: 'الجد',
+                share: 'ع',
+                upper: 1,
+                lower: 1,
+                mcount: malesibling.length+1,
+                fcount: femalesibling.length
+              },
+              force : femalesibling.length > 0 ? true : false,
+            }
+            IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
+            numbers.push(1);
+          } else if(malesibling.length*2 + femalesibling.length > 4){
             group[name] = {
               ...group[name],
               item: {
                 ID: group[name].data.ID,
                 name: 'الجد',
-                share: '1/6',
+                share: '1/3',
                 upper: 1,
-                lower: 6
+                lower: 3
               }
             }
-            numbers.push(6);
-            group[malesibling[0].title] = femalesibling.length > 0 ? { 
-              count: malesibling.length*2 + femalesibling.length,
-              data: [...malesibling, ...femalesibling],
+            numbers.push(3);
+            group[malesibling[0].title] = { 
+              count: femalesibling.length > 0 ? malesibling.length*2 + femalesibling.length : malesibling.length,
+              data: femalesibling.length > 0 ? [...malesibling, ...femalesibling] : malesibling,
               mdata: malesibling,
               fdata: femalesibling,
               item: {
@@ -585,39 +616,14 @@ function Cart() {
                 mcount: malesibling.length,
                 fcount: femalesibling.length
               },
-              force : true
-            } : {
-              count: malesibling.length,
-              data: malesibling,
-              item: {
-                ID: group[name].data.ID,
-                name: malesibling[0].title,
-                share: 'ع',
-                upper: 1,
-                lower: 1
-              },
-              force : false
+              force : femalesibling.length > 0 ? true : false
             }
             IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
             numbers.push(1);
-          } else {
-            femalesibling.length == 0 ? femalesibling = list.filter(data => data.con == 'sibling' && data.rel == 'Father Side' && data.sex == 'female') : '';
-            femalesibling.length == 1 ? setAK(true) : '';
-            group[name] = femalesibling.length == 1 ? { 
-              count: 3,
-              mdata: [...group[name].data],
-              fdata: femalesibling,
-              item: {
-                ID: group[name].data.ID,
-                name: 'الجد',
-                share: 'ع',
-                upper: 1,
-                lower: 1,
-                mcount: 1,
-                fcount: 1
-              },
-              force : true
-            } : {
+          }
+        } else {
+          if(rest / mass < calculate(trues)/6){
+            group[name] = {
               ...group[name],
               item: {
                 ID: group[name].data.ID,
@@ -627,123 +633,78 @@ function Cart() {
                 lower: 6
               }
             }
-            IDs = femalesibling.length == 1 ? [...IDs, femalesibling[0].ID] : '';
             numbers.push(6);
-          }
-        } else if(malesibling.length*2 + femalesibling.length <= 4){
-          group[name] = femalesibling.length > 0 ? { 
-            count: malesibling.length*2 + femalesibling.length + 2,
-            mdata: [...group[name].data, ...malesibling],
-            fdata: femalesibling,
-            item: {
-              ID: group[name].data.ID,
-              name: 'الجد',
-              share: 'ع',
-              upper: 1,
-              lower: 1,
-              mcount: malesibling.length+1,
-              fcount: femalesibling.length
-            },
-            force : true
-          } : {
-            count: malesibling.length + 1,
-            data: [...group[name].data, ...malesibling],
-            item: {
-              ID: group[name].data.ID,
-              name: 'الجد',
-              share: 'ع',
-              upper: 1,
-              lower: 1
-            },
-            force : false
-          }
-          IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
-          if(FSS.length > 0 && femalesibling.length > 0 && malesibling.length == 0){
-            group[name] = {
-              count: 1,
-              data: list.filter(data => data.title == name),
+            group[malesibling[0].title] = { 
+              count: femalesibling.length > 0 ? malesibling.length*2 + femalesibling.length : malesibling.length,
+              data: femalesibling.length > 0 ? [...malesibling, ...femalesibling] : malesibling,
+              mdata: malesibling,
+              fdata: femalesibling,
               item: {
-                ID: group[name].item.ID,
-                name: 'الجد',
-                share: 'ب 1/3',
+                ID: group[name].data.ID,
+                name: malesibling[0].title,
+                share: 'ع',
                 upper: 1,
-                lower: 3,
-                omar: true
-              }
-            }
-            numbers.push(3);
-            group[femalesibling[0].title] = {
-              count: femalesibling.length,
-              data: femalesibling,
-              item: {
-                ID: femalesibling[0].ID,
-                name: femalesibling[0].title,
-                share: femalesibling.length == 1 ? 'ب 1/2' : 'ب 2/3',
-                upper: femalesibling.length == 1 ? 1 : 2,
-                lower: femalesibling.length == 1 ? 2 : 3,
-                omar: true
-              }
-            }
-            IDs = [...IDs, ...femalesibling.map(data => data.ID)]
-            femalesibling.length == 1 ? numbers.push(2) : numbers.push(3);
-            group[FSS[0].title] = {
-              count: FSS.length,
-              data: FSS,
-              item: {
-                ID: FSS[0].ID,
-                name: FSS[0].title,
-                share: 'ب',
-                upper: 1,
-                lower: 1
+                lower: 1,
+                mcount: malesibling.length,
+                fcount: femalesibling.length
               },
-              force: false
+              force : femalesibling.length > 0 ? true : false
             }
-            IDs = [...IDs, ...FSS.map(data => data.ID)]
+            IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
             numbers.push(1);
-          }
-          numbers.push(1);
-        } else if(malesibling.length*2 + femalesibling.length > 4){
-          group[name] = {
-            ...group[name],
-            item: {
-              ID: group[name].data.ID,
-              name: 'الجد',
-              share: 'ب 1/3',
-              upper: 1,
-              lower: 3,
-              omar: true
+          } else if(rest > calculate(trues)/6){
+            if(rest / mass > rest / 3){
+              group[name] = {
+                count: femalesibling.length > 0 ? malesibling.length*2 + femalesibling.length + 2 : malesibling.length + 1,
+                data:  femalesibling.length > 0 ? [...group[name].data, ...malesibling, ...femalesibling] : [...group[name].data, ...malesibling],
+                mdata: [...group[name].data, ...malesibling],
+                fdata: femalesibling,
+                item: {
+                  ID: group[name].data.ID,
+                  name: 'الجد',
+                  share: 'ع',
+                  upper: 1,
+                  lower: 1,
+                  mcount: malesibling.length+1,
+                  fcount: femalesibling.length
+                },
+                force : femalesibling.length > 0 ? true : false,
+              }
+              IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
+              numbers.push(1);
+            } else if(rest / mass < rest / 3){
+              group[name] = {
+                ...group[name],
+                item: {
+                  ID: group[name].data.ID,
+                  name: 'الجد',
+                  share: '1/3 ب',
+                  upper: 1,
+                  lower: 3,
+                  omar: true
+                }
+              }
+              numbers.push(3);
+              group[malesibling[0].title] = { 
+                count: femalesibling.length > 0 ? malesibling.length*2 + femalesibling.length : malesibling.length,
+                data: femalesibling.length > 0 ? [...malesibling, ...femalesibling] : malesibling,
+                mdata: malesibling,
+                fdata: femalesibling,
+                item: {
+                  ID: group[name].data.ID,
+                  name: malesibling[0].title,
+                  share: 'ع',
+                  upper: 1,
+                  lower: 1,
+                  mcount: malesibling.length,
+                  fcount: femalesibling.length
+                },
+                force : femalesibling.length > 0 ? true : false
+              }
+              IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
+              numbers.push(1);
             }
           }
-          numbers.push(3);
-          group[malesibling[0].title] = femalesibling.length > 0 ? { 
-            count: malesibling.length*2 + femalesibling.length,
-            data: [...malesibling, ...femalesibling],
-            mdata: malesibling,
-            fdata: femalesibling,
-            item: {
-              ID: group[name].data.ID,
-              name: malesibling[0].title,
-              share: 'ع',
-              upper: 1,
-              lower: 1,
-              mcount: malesibling.length,
-              fcount: femalesibling.length
-            },
-            force : true
-          } : {
-            count: malesibling.length,
-            data: malesibling,
-            item: {
-              ID: group[name].data.ID,
-              name: malesibling[0].title,
-              share: 'ع',
-              upper: 1,
-              lower: 1
-            },
-            force : false
-          }
-          IDs = femalesibling.length > 0 ? [...IDs, ...malesibling.map(data => data.ID), ...femalesibling.map(data => data.ID)] : [...IDs, ...malesibling.map(data => data.ID)]
-          numbers.push(1);
         }
       }
     }
